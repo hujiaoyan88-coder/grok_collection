@@ -160,276 +160,193 @@
     </div>
 
     <script>
-        
-        let items = [];
-        let currentFilter = { search: '', category: '' };
-        let editingId = null;
-        let tempImage = null;
+    let items = [];
+    let currentFilter = { search: '', category: '' };
+    let editingId = null;
 
-        
-        function renderCategoryChips() {
-            const container = document.getElementById('category-chips');
-            container.innerHTML = '';
-            
-            const allBtn = document.createElement('button');
-            allBtn.textContent = 'すべて';
-            allBtn.className = `px-4 py-1.5 text-xs rounded-full whitespace-nowrap border transition-all ${currentFilter.category === '' ? 'bg-cyan-400 text-black border-cyan-400' : 'bg-white/10 border-white/20 text-white/80 hover:bg-white/20'}`;
-            allBtn.onclick = () => { currentFilter.category = ''; renderAll(); };
-            container.appendChild(allBtn);
-
-            const cats = [...new Set(items.map(i => i.category))].sort();
-            cats.forEach(cat => {
-                const btn = document.createElement('button');
-                btn.textContent = cat;
-                btn.className = `px-4 py-1.5 text-xs rounded-full whitespace-nowrap border transition-all ${currentFilter.category === cat ? 'bg-cyan-400 text-black border-cyan-400' : 'bg-white/10 border-white/20 text-white/80 hover:bg-white/20'}`;
-                btn.onclick = () => { currentFilter.category = cat; renderAll(); };
-                container.appendChild(btn);
-            });
-        }
-
-        function openAddModal() {
-            editingId = null;
-            tempImage = null;
-            document.getElementById('modal-title').textContent = '新しい作品を追加';
-            document.getElementById('item-name').value = '';
-            document.getElementById('item-category').value = '';
-            document.getElementById('item-memo').value = '';
-            
-            const today = new Date().toISOString().split('T')[0];
-            document.getElementById('item-date').value = today;
-            
-            document.getElementById('image-preview-container').classList.add('hidden');
-            document.getElementById('item-image').value = '';
-            
-            document.getElementById('modal').classList.remove('hidden');
-            document.getElementById('modal').classList.add('flex');
-        }
-
-        function editItem(id) {
-            const item = items.find(i => i.id === id);
-            if (!item) return;
-
-            editingId = id;
-            tempImage = null;
-            document.getElementById('modal-title').textContent = '作品を編集';
-            
-            document.getElementById('item-name').value = item.name;
-            document.getElementById('item-date').value = item.date;
-            document.getElementById('item-category').value = item.category;
-            document.getElementById('item-memo').value = item.memo || '';
-
-            const previewContainer = document.getElementById('image-preview-container');
-            if (item.image) {
-                document.getElementById('image-preview').src = item.image;
-                previewContainer.classList.remove('hidden');
-            } else {
-                previewContainer.classList.add('hidden');
-            }
-
-            document.getElementById('modal').classList.remove('hidden');
-            document.getElementById('modal').classList.add('flex');
-        }
-
-        function previewImage(input) {
-            if (input.files && input.files[0]) {
-                const reader = new FileReader();
-                reader.onload = e => {
-                    tempImage = e.target.result;
-                    const container = document.getElementById('image-preview-container');
-                    document.getElementById('image-preview').src = tempImage;
-                    container.classList.remove('hidden');
-                };
-                reader.readAsDataURL(input.files[0]);
-            }
-        }
-
-        function clearImagePreview() {
-            document.getElementById('image-preview-container').classList.add('hidden');
-            tempImage = null;
-        }
-
-        function saveItem() {
-            {
-            const name = document.getElementById('item-name').value.trim();
-            if (!name) return alert('作品名を入力して！');
-            
-            const imageUrl = document.getElementById('item-image-url').value.trim();
-            if (!imageUrl) return alert('画像URLを入力してね！');
-                
-            const date = document.getElementById('item-date').value;
-            if (!date) return alert('制作日を入力してね');
-
-            const category = document.getElementById('item-category').value.trim() || 'その他';
-            const memo = document.getElementById('item-memo').value.trim();
-
-            let image = null;
-            if (tempImage) {
-                image = tempImage;
-            } else if (editingId) {
-                const existing = items.find(i => i.id === editingId);
-                if (existing) image = existing.image;
-            }
-
-            if (editingId) {
-                // 更新処理
-            } else {
-                items.push({
-                    id: Date.now(),
-                    name,
-                    category: document.getElementById('item-category').value.trim() || 'その他',
-                    memo: document.getElementById('item-memo').value.trim(),
-                    imageUrl,
-                    date: document.getElementById('item-date').value
-                });
-            }
+    function loadFromStorage() {
+        const saved = localStorage.getItem('cosmicWorksURL');
+        if (saved) {
+            items = JSON.parse(saved);
+        } else {
+            items = [
+                {id: Date.now()-100000, name: "銀河の夜明け", category: "デジタルイラスト", memo: "星の光にこだわった", imageUrl: "https://picsum.photos/id/1015/800/600", date: "2025-06-15"},
+                {id: Date.now()-80000, name: "ネビュラ探検船", category: "3Dモデル", memo: "", imageUrl: "https://picsum.photos/id/201/800/600", date: "2025-07-01"}
+            ];
             saveToStorage();
-            closeModal();
-            renderAll();
         }
+    }
 
-        function closeModal() {
-            document.getElementById('modal').classList.add('hidden');
-            document.getElementById('modal').classList.remove('flex');
-        }
+    function saveToStorage() {
+        localStorage.setItem('cosmicWorksURL', JSON.stringify(items));
+    }
 
-        function deleteItem(id) {
-            if (confirm('この作品を削除しますか？')) {
-                items = items.filter(i => i.id !== id);
-                saveToStorage();
-                renderAll();
-            }
-        }
+    function updateStats() {
+        document.getElementById('stat-total').textContent = items.length;
+    }
 
-        function clearAllData() {
-            if (confirm('すべての作品データを削除しますか？')) {
-                localStorage.removeItem('cosmicWorksCollection');
-                items = [];
-                renderAll();
-            }
-        }
-
-        function loadFromStorage() {
-            const saved = localStorage.getItem('cosmicWorksURL');
-            if (saved) items = JSON.parse(saved);
-            else {
-                items = [
-                    {id: Date.now()-100000, name: "銀河の夜明け", category: "デジタルイラスト", memo: "", imageUrl: "https://picsum.photos/id/1015/800/600", date: "2025-06-15"},
-                    {id: Date.now()-80000, name: "ネビュラ船", category: "3Dモデル", memo: "", imageUrl: "https://picsum.photos/id/201/800/600", date: "2025-07-01"}
-                ];
-                saveToStorage();
-            }
-        }
-
-        function saveToStorage() {
-            localStorage.setItem('cosmicWorksURL', JSON.stringify(items));
-        }
-
-
-        function saveToStorage() { localStorage.setItem('cosmicWorksCollection', JSON.stringify(items)); }
-
-        function updateStats() {
-            document.getElementById('stat-total').textContent = items.length;
-        }
-
+    function renderCategoryChips() {
+        const container = document.getElementById('category-chips');
+        container.innerHTML = '';
         
-<!-- 前のコードの <script> 部分に以下の関数を追加・置き換え -->
+        const allBtn = document.createElement('button');
+        allBtn.textContent = 'すべて';
+        allBtn.className = `px-4 py-1.5 text-xs rounded-full whitespace-nowrap border transition-all ${currentFilter.category === '' ? 'bg-cyan-400 text-black border-cyan-400' : 'bg-white/10 border-white/20 text-white/80 hover:bg-white/20'}`;
+        allBtn.onclick = () => { currentFilter.category = ''; renderAll(); };
+        container.appendChild(allBtn);
 
-function previewImage(input) {
-    if (!input.files[0]) return;
-    const reader = new FileReader();
-    reader.onload = function(e) {
-        const img = new Image();
-        img.onload = function() {
-            // リサイズ処理（長辺800pxに縮小）
-            const canvas = document.createElement('canvas');
-            let width = img.width;
-            let height = img.height;
-            const maxSize = 800;
-            
-            if (width > height) {
-                if (width > maxSize) {
-                    height = Math.round(height * maxSize / width);
-                    width = maxSize;
-                }
-            } else {
-                if (height > maxSize) {
-                    width = Math.round(width * maxSize / height);
-                    height = maxSize;
-                }
-            }
-            
-            canvas.width = width;
-            canvas.height = height;
-            const ctx = canvas.getContext('2d');
-            ctx.drawImage(img, 0, 0, width, height);
-            
-            tempImage = canvas.toDataURL('image/jpeg', 0.85); // JPEG + 85%品質でさらに圧縮
-            document.getElementById('image-preview').src = tempImage;
-            document.getElementById('image-preview-container').classList.remove('hidden');
-        };
-        img.src = e.target.result;
-    };
-    reader.readAsDataURL(input.files[0]);
-}
+        const cats = [...new Set(items.map(i => i.category))].sort();
+        cats.forEach(cat => {
+            const btn = document.createElement('button');
+            btn.textContent = cat;
+            btn.className = `px-4 py-1.5 text-xs rounded-full whitespace-nowrap border transition-all ${currentFilter.category === cat ? 'bg-cyan-400 text-black border-cyan-400' : 'bg-white/10 border-white/20 text-white/80 hover:bg-white/20'}`;
+            btn.onclick = () => { currentFilter.category = cat; renderAll(); };
+            container.appendChild(btn);
+        });
+    }
 
+    function renderItems() {
+        const grid = document.getElementById('items-grid');
+        grid.innerHTML = '';
+        const empty = document.getElementById('empty-state');
 
+        let filtered = items.filter(item => {
+            const s = currentFilter.search.toLowerCase();
+            return (!s || item.name.toLowerCase().includes(s) || (item.memo||'').toLowerCase().includes(s)) &&
+                   (!currentFilter.category || item.category === currentFilter.category);
+        }).sort((a,b) => new Date(b.date) - new Date(a.date));
 
-        function renderItems() {
-            const grid = document.getElementById('items-grid');
-            grid.innerHTML = '';
-            const empty = document.getElementById('empty-state');
+        if (filtered.length === 0) {
+            empty.classList.remove('hidden');
+            return;
+        }
+        empty.classList.add('hidden');
 
-            let filtered = items.filter(item => {
-                const s = currentFilter.search.toLowerCase();
-                return (!s || item.name.toLowerCase().includes(s) || (item.memo||'').toLowerCase().includes(s)) &&
-                       (!currentFilter.category || item.category === currentFilter.category);
-            }).sort((a,b) => new Date(b.date) - new Date(a.date));
-
-            if (filtered.length === 0) {
-                empty.classList.remove('hidden');
-                return;
-            }
-            empty.classList.add('hidden');
-
-            filtered.forEach(item => {
-                const card = document.createElement('div');
-                card.className = "work-card bg-white/5 border border-white/10 rounded-3xl overflow-hidden";
-                card.innerHTML = `
-                    ${item.image ? `<img src="${item.image}" class="w-full h-40 object-cover">` : `<div class="h-40 bg-gradient-to-br from-violet-900 to-cyan-900 flex items-center justify-center"><i class="fa-solid fa-meteor text-6xl text-white/30"></i></div>`}
-                    <div class="p-4">
-                        <div class="font-semibold">${item.name}</div>
-                        <div class="text-xs text-cyan-300 mt-1">${item.category} • ${item.date}</div>
-                        ${item.memo ? `<div class="text-xs text-white/60 mt-2 line-clamp-2">${item.memo}</div>` : ''}
-                        <div class="flex gap-2 mt-4">
-                            <button onclick="editItem(${item.id});event.stopImmediatePropagation()" class="flex-1 py-2 text-xs bg-white/10 hover:bg-white/20 rounded-2xl">編集</button>
-                            <button onclick="deleteItem(${item.id});event.stopImmediatePropagation()" class="flex-1 py-2 text-xs bg-white/10 hover:bg-red-500/30 text-red-300 rounded-2xl">削除</button>
-                        </div>
+        filtered.forEach(item => {
+            const card = document.createElement('div');
+            card.className = "work-card bg-white/5 border border-white/10 rounded-3xl overflow-hidden";
+            card.innerHTML = `
+                <img src="${item.imageUrl}" class="w-full h-40 object-cover" onerror="this.src='https://picsum.photos/id/1005/400/300'">
+                <div class="p-4">
+                    <div class="font-semibold">${item.name}</div>
+                    <div class="text-xs text-cyan-300 mt-1">${item.category} • ${item.date}</div>
+                    ${item.memo ? `<div class="text-xs text-white/60 mt-2 line-clamp-2">${item.memo}</div>` : ''}
+                    <div class="flex gap-2 mt-4">
+                        <button onclick="editItem(${item.id});event.stopImmediatePropagation()" class="flex-1 py-2 text-xs bg-white/10 hover:bg-white/20 rounded-2xl">編集</button>
+                        <button onclick="deleteItem(${item.id});event.stopImmediatePropagation()" class="flex-1 py-2 text-xs bg-white/10 hover:bg-red-500/30 text-red-300 rounded-2xl">削除</button>
                     </div>
-                `;
-                grid.appendChild(card);
+                </div>
+            `;
+            grid.appendChild(card);
+        });
+    }
+
+    function renderAll() {
+        renderItems();
+        updateStats();
+        renderCategoryChips();
+    }
+
+    function openAddModal() {
+        editingId = null;
+        document.getElementById('modal-title').textContent = '新しい作品を追加';
+        document.getElementById('item-name').value = '';
+        document.getElementById('item-category').value = '';
+        document.getElementById('item-memo').value = '';
+        document.getElementById('item-image-url').value = '';
+        
+        const today = new Date().toISOString().split('T')[0];
+        document.getElementById('item-date').value = today;
+        
+        document.getElementById('modal').classList.remove('hidden');
+        document.getElementById('modal').classList.add('flex');
+    }
+
+    function editItem(id) {
+        const item = items.find(i => i.id === id);
+        if (!item) return;
+
+        editingId = id;
+        document.getElementById('modal-title').textContent = '作品を編集';
+        
+        document.getElementById('item-name').value = item.name;
+        document.getElementById('item-date').value = item.date;
+        document.getElementById('item-category').value = item.category;
+        document.getElementById('item-memo').value = item.memo || '';
+        document.getElementById('item-image-url').value = item.imageUrl || '';
+
+        document.getElementById('modal').classList.remove('hidden');
+        document.getElementById('modal').classList.add('flex');
+    }
+
+    function saveItem() {
+        const name = document.getElementById('item-name').value.trim();
+        if (!name) return alert('作品名を入力して！');
+        
+        const imageUrl = document.getElementById('item-image-url').value.trim();
+        if (!imageUrl) return alert('画像URLを入力してね！');
+
+        const date = document.getElementById('item-date').value;
+        if (!date) return alert('制作日を入力してね');
+
+        const category = document.getElementById('item-category').value.trim() || 'その他';
+        const memo = document.getElementById('item-memo').value.trim();
+
+        if (editingId) {
+            const idx = items.findIndex(i => i.id === editingId);
+            items[idx] = { ...items[idx], name, category, memo, date, imageUrl };
+        } else {
+            items.push({
+                id: Date.now(),
+                name,
+                category,
+                memo,
+                imageUrl,
+                date
             });
         }
 
-        function renderAll() {
-            renderItems();
-            updateStats();
-            renderCategoryChips();
-          }
+        saveToStorage();
+        closeModal();
+        renderAll();
+    }
 
-        function setupSearch() {
-            document.getElementById('search-input').addEventListener('input', e => {
-                currentFilter.search = e.target.value;
-                renderItems();
-            });
-        }
+    function closeModal() {
+        document.getElementById('modal').classList.add('hidden');
+        document.getElementById('modal').classList.remove('flex');
+    }
 
-        function init() {
-            loadFromStorage();
-            setupSearch();
+    function deleteItem(id) {
+        if (confirm('この作品を削除しますか？')) {
+            items = items.filter(i => i.id !== id);
+            saveToStorage();
             renderAll();
         }
+    }
 
-        window.onload = () => { loadFromStorage(); /* 他の初期化 */ };
+    function clearAllData() {
+        if (confirm('すべての作品データを削除しますか？')) {
+            localStorage.removeItem('cosmicWorksURL');
+            items = [];
+            renderAll();
+        }
+    }
+
+    function setupSearch() {
+        document.getElementById('search-input').addEventListener('input', e => {
+            currentFilter.search = e.target.value;
+            renderItems();
+        });
+    }
+
+    function init() {
+        loadFromStorage();
+        setupSearch();
+        renderAll();
+        console.log('%c宇宙作品コレクション (URL版) 起動！', 'color:#67e8f9');
+    }
+
+    window.onload = init;
     </script>
 </body>
 </html>
