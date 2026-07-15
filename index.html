@@ -323,6 +323,48 @@
             document.getElementById('stat-total').textContent = items.length;
         }
 
+        
+<!-- 前のコードの <script> 部分に以下の関数を追加・置き換え -->
+
+function previewImage(input) {
+    if (!input.files[0]) return;
+    const reader = new FileReader();
+    reader.onload = function(e) {
+        const img = new Image();
+        img.onload = function() {
+            // リサイズ処理（長辺800pxに縮小）
+            const canvas = document.createElement('canvas');
+            let width = img.width;
+            let height = img.height;
+            const maxSize = 800;
+            
+            if (width > height) {
+                if (width > maxSize) {
+                    height = Math.round(height * maxSize / width);
+                    width = maxSize;
+                }
+            } else {
+                if (height > maxSize) {
+                    width = Math.round(width * maxSize / height);
+                    height = maxSize;
+                }
+            }
+            
+            canvas.width = width;
+            canvas.height = height;
+            const ctx = canvas.getContext('2d');
+            ctx.drawImage(img, 0, 0, width, height);
+            
+            tempImage = canvas.toDataURL('image/jpeg', 0.85); // JPEG + 85%品質でさらに圧縮
+            document.getElementById('image-preview').src = tempImage;
+            document.getElementById('image-preview-container').classList.remove('hidden');
+        };
+        img.src = e.target.result;
+    };
+    reader.readAsDataURL(input.files[0]);
+}
+
+
 
         function renderItems() {
             const grid = document.getElementById('items-grid');
