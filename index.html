@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>🧸コレクション</title>
+    <title>🌌 宇宙作品コレクション</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <style>
@@ -11,113 +11,451 @@
         
         body {
             font-family: 'Noto Sans JP', system-ui, sans-serif;
+            background: radial-gradient(circle at 50% 20%, #1e1b4b 0%, #0f0a2e 50%, #0a081f 100%);
+            background-attachment: fixed;
         }
         
-        .collection-card {
-            transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1), 
-                       box-shadow 0.2s cubic-bezier(0.4, 0.0, 0.2, 1);
+        .cosmic-bg {
+            position: relative;
+            overflow: hidden;
         }
         
-        .collection-card:active {
-            transform: scale(0.97);
+        .cosmic-bg::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background-image: 
+                radial-gradient(white 1px, transparent 1px),
+                radial-gradient(white 1px, transparent 1px);
+            background-size: 3px 3px, 5px 5px;
+            background-position: 0 0, 20px 20px;
+            opacity: 0.15;
+            pointer-events: none;
+            animation: twinkle 4s infinite alternate ease-in-out;
         }
         
-        .modal {
-            animation: modalPop 0.2s ease-out forwards;
+        @keyframes twinkle {
+            0% { opacity: 0.1; }
+            100% { opacity: 0.25; }
         }
         
-        @keyframes modalPop {
-            from {
-                opacity: 0;
-                transform: scale(0.95) translateY(10px);
-            }
-            to {
-                opacity: 1;
-                transform: scale(1) translateY(0);
-            }
+        .nebula {
+            background: linear-gradient(135deg, #4c1d95 0%, #1e3a8a 50%, #312e81 100%);
+            box-shadow: 0 0 40px rgba(124, 58, 237, 0.3);
         }
         
-        .item-image {
-            transition: transform 0.3s ease;
+        .work-card {
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            background: rgba(15, 10, 46, 0.85);
+            border: 1px solid rgba(124, 58, 237, 0.3);
         }
         
-        .collection-card:hover .item-image {
-            transform: scale(1.05);
+        .work-card:hover {
+            transform: translateY(-4px) scale(1.01);
+            box-shadow: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
+            border-color: rgba(103, 232, 249, 0.5);
         }
         
-        .filter-chip {
+        .cosmic-button {
+            background: linear-gradient(135deg, #6366f1, #a855f7);
+            box-shadow: 0 0 20px rgba(103, 232, 249, 0.4);
             transition: all 0.2s ease;
         }
         
-        .filter-chip.active {
-            background-color: #7c3aed;
-            color: white;
-            border-color: #7c3aed;
+        .cosmic-button:hover {
+            box-shadow: 0 0 30px rgba(103, 232, 249, 0.6);
+            transform: scale(1.05);
         }
         
-        .status-badge {
-            font-size: 0.75rem;
-            padding: 2px 10px;
-            border-radius: 9999px;
+        .modal {
+            animation: cosmicPop 0.25s ease-out forwards;
+        }
+        
+        @keyframes cosmicPop {
+            from { opacity: 0; transform: scale(0.9) translateY(30px); }
+            to { opacity: 1; transform: scale(1) translateY(0); }
+        }
+        
+        .star {
+            position: absolute;
+            background: white;
+            border-radius: 50%;
+            animation: twinkle-star 1.5s infinite alternate;
         }
     </style>
 </head>
-<body class="bg-zinc-950 text-white">
-    <div class="max-w-md mx-auto min-h-screen flex flex-col">
+<body class="text-white cosmic-bg min-h-screen">
+    <div class="max-w-md mx-auto pb-24">
         <!-- ヘッダー -->
-        <div class="px-5 pt-8 pb-4 bg-zinc-900 sticky top-0 z-50 border-b border-zinc-800">
-            <div class="flex items-center justify-between mb-1">
+        <div class="px-5 pt-8 pb-6 bg-[#0f0a2e]/90 backdrop-blur-md sticky top-0 z-50 border-b border-white/10">
+            <div class="flex items-center justify-between">
                 <div class="flex items-center gap-x-3">
-                    <div class="w-11 h-11 bg-violet-600 rounded-2xl flex items-center justify-center">
-                        <i class="fa-solid fa-boxes-stacked text-3xl"></i>
+                    <div class="w-12 h-12 rounded-2xl bg-gradient-to-br from-cyan-400 via-violet-500 to-fuchsia-500 flex items-center justify-center text-3xl shadow-lg">
+                        🌌
                     </div>
                     <div>
-                        <h1 class="text-3xl font-bold tracking-tighter">コレクション</h1>
-                        <p class="text-xs text-zinc-500 -mt-1">My Collection</p>
+                        <h1 class="text-3xl font-bold tracking-[-1.5px]">宇宙作品</h1>
+                        <p class="text-xs text-cyan-300 -mt-1">My Cosmic Creations</p>
                     </div>
                 </div>
-                <button onclick="clearAllData()" 
-                        class="text-zinc-500 hover:text-red-400 transition-colors p-2">
-                    <i class="fa-solid fa-trash text-lg"></i>
+                <button onclick="clearAllData()" class="text-white/60 hover:text-red-400 transition-colors p-2">
+                    <i class="fa-solid fa-trash text-xl"></i>
                 </button>
             </div>
         </div>
 
         <!-- 統計 -->
-        <div class="px-5 pt-5 grid grid-cols-3 gap-3">
-            <div class="bg-zinc-900 rounded-3xl p-4 text-center">
-                <div class="text-3xl font-bold" id="stat-total">0</div>
-                <div class="text-xs text-zinc-500 mt-0.5">総アイテム</div>
-            </div>
-            <div class="bg-zinc-900 rounded-3xl p-4 text-center">
-                <div class="text-3xl font-bold text-emerald-400" id="stat-owned">0</div>
-                <div class="text-xs text-zinc-500 mt-0.5">所有中</div>
-            </div>
-            <div class="bg-zinc-900 rounded-3xl p-4 text-center">
-                <div class="text-3xl font-bold text-sky-400" id="stat-wishlist">0</div>
-                <div class="text-xs text-zinc-500 mt-0.5">欲しい</div>
+        <div class="px-5 pt-6">
+            <div class="nebula rounded-3xl p-6 text-center border border-white/10">
+                <div class="text-5xl font-bold text-white" id="stat-total">0</div>
+                <div class="text-sm text-cyan-300 tracking-widest mt-1">総作品数</div>
             </div>
         </div>
 
         <!-- 検索 -->
-        <div class="px-5 pt-5">
+        <div class="px-5 pt-6">
             <div class="relative">
-                <i class="fa-solid fa-search absolute left-4 top-3.5 text-zinc-500"></i>
-                <input type="text" id="search-input" 
-                       class="w-full bg-zinc-900 border border-zinc-800 focus:border-violet-500 transition-colors pl-11 pr-4 py-3 rounded-3xl text-sm placeholder:text-zinc-500"
-                       placeholder="アイテムを検索...">
+                <i class="fa-solid fa-search absolute left-4 top-3.5 text-white/50"></i>
+                <input id="search-input" type="text" placeholder="作品名や説明で検索..."
+                       class="w-full bg-white/5 border border-white/20 focus:border-cyan-400 rounded-3xl pl-11 py-3.5 text-sm placeholder:text-white/40">
             </div>
         </div>
 
-        <!-- ステータスフィルター -->
+        <!-- カテゴリチップ -->
         <div class="px-5 pt-4">
-            <div class="flex bg-zinc-900 rounded-3xl p-1">
-                <button onclick="setStatusFilter('all')" id="filter-all"
-                        class="flex-1 py-2 text-sm font-medium rounded-[20px] transition-all active-filter">
-                    すべて
-                </button>
-                <button onclick="setStatusFilter('owned')" id="filter-owned"
-                        class="flex-1 py-2 text-sm font-medium rounded-[20px] transition-all">
-                    所有中
-                </button>
-                <button onclick​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​
+            <div id="category-chips" class="flex gap-2 overflow-x-auto pb-2"></div>
+        </div>
+
+        <!-- 作品一覧 -->
+        <div class="px-5 pt-2">
+            <div id="items-grid" class="grid grid-cols-2 gap-4"></div>
+            <div id="empty-state" class="hidden text-center py-16">
+                <i class="fa-solid fa-meteor text-7xl text-white/30 mb-4"></i>
+                <p class="text-white/50">まだ作品がありません</p>
+                <p class="text-xs text-white/40 mt-1">右下のロケットボタンで追加しよう！</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- 追加ボタン（超目立つロケット） -->
+    <button onclick="openAddModal()" 
+            class="fixed bottom-8 right-6 w-16 h-16 cosmic-button rounded-full flex items-center justify-center shadow-2xl z-[999] active:scale-90">
+        <i class="fa-solid fa-rocket text-3xl text-white"></i>
+    </button>
+
+    <!-- モーダル -->
+    <div id="modal" onclick="if (event.target.id === 'modal') closeModal()" 
+         class="hidden fixed inset-0 bg-black/80 flex items-end sm:items-center justify-center z-[1000]">
+        <div onclick="event.stopImmediatePropagation()" 
+             class="bg-[#0f0a2e] w-full max-w-md rounded-t-3xl sm:rounded-3xl p-6 border border-white/10 modal">
+            
+            <div class="flex justify-between items-center mb-6">
+                <h2 id="modal-title" class="text-2xl font-bold text-white">新しい作品を追加</h2>
+                <button onclick="closeModal()" class="text-3xl text-white/60 hover:text-white">×</button>
+            </div>
+
+            <div class="space-y-5">
+                <div>
+                    <label class="text-cyan-300 text-sm mb-1.5 block">作品名</label>
+                    <input id="item-name" type="text" class="w-full bg-white/5 border border-white/20 focus:border-cyan-400 rounded-2xl px-4 py-3 text-white">
+                </div>
+
+                <div>
+                    <label class="text-cyan-300 text-sm mb-1.5 block">制作日</label>
+                    <input id="item-date" type="date" class="w-full bg-white/5 border border-white/20 focus:border-cyan-400 rounded-2xl px-4 py-3 text-white">
+                </div>
+
+                <div>
+                    <label class="text-cyan-300 text-sm mb-1.5 block">カテゴリ</label>
+                    <input id="item-category" type="text" placeholder="例: デジタルイラスト / 3Dモデル / ゲーム" 
+                           class="w-full bg-white/5 border border-white/20 focus:border-cyan-400 rounded-2xl px-4 py-3 text-white">
+                </div>
+
+                <div>
+                    <label class="text-cyan-300 text-sm mb-1.5 block">説明・メモ</label>
+                    <textarea id="item-memo" rows="3" placeholder="制作の裏話やこだわりポイント..."
+                              class="w-full bg-white/5 border border-white/20 focus:border-cyan-400 rounded-2xl px-4 py-3 text-white resize-y"></textarea>
+                </div>
+
+                <div>
+                    <label class="text-cyan-300 text-sm mb-1.5 block">作品画像</label>
+                    <label class="cursor-pointer flex flex-col items-center justify-center border border-dashed border-white/30 hover:border-cyan-400 transition-colors rounded-2xl py-8 text-center">
+                        <i class="fa-solid fa-image text-3xl mb-2 text-white/60"></i>
+                        <span class="text-sm text-white/70">画像をアップロード</span>
+                        <input type="file" id="item-image" accept="image/*" class="hidden" onchange="previewImage(this)">
+                    </label>
+                    <div id="image-preview-container" class="hidden mt-3 relative rounded-2xl overflow-hidden border border-white/10">
+                        <img id="image-preview" class="w-full">
+                        <button onclick="clearImagePreview()" class="absolute top-2 right-2 bg-black/70 text-white w-7 h-7 rounded-full flex items-center justify-center text-sm">×</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="flex gap-3 mt-8">
+                <button onclick="closeModal()" class="flex-1 py-4 rounded-2xl bg-white/10 hover:bg-white/15 font-medium">キャンセル</button>
+                <button onclick="saveItem()" class="flex-1 py-4 rounded-2xl cosmic-button font-medium">作品を保存</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let items = [];
+        let currentFilter = { search: '', category: '' };
+        let editingId = null;
+        let tempImage = null;
+
+        function loadFromStorage() {
+            const saved = localStorage.getItem('cosmicWorksCollection');
+            if (saved) {
+                items = JSON.parse(saved);
+            } else {
+                // 宇宙作品サンプル
+                items = [
+                    {
+                        id: Date.now() - 120000,
+                        name: "銀河の夜明け",
+                        category: "デジタルイラスト",
+                        memo: "初めての宇宙テーマ作品。星の光をこだわって描いた",
+                        image: "https://picsum.photos/id/1015/400/300",
+                        date: "2025-06-15"
+                    },
+                    {
+                        id: Date.now() - 90000,
+                        name: "ネビュラ探検船",
+                        category: "3Dモデル",
+                        memo: "Blenderで作った宇宙船。エンジンの光が自慢",
+                        image: "https://picsum.photos/id/201/400/300",
+                        date: "2025-07-02"
+                    },
+                    {
+                        id: Date.now() - 60000,
+                        name: "ピクセル宇宙冒険",
+                        category: "ピクセルアート",
+                        memo: "レトロゲーム風の短編アニメーション用素材",
+                        image: "https://picsum.photos/id/1005/400/300",
+                        date: "2025-05-20"
+                    }
+                ];
+                saveToStorage();
+            }
+        }
+
+        function saveToStorage() {
+            localStorage.setItem('cosmicWorksCollection', JSON.stringify(items));
+        }
+
+        function updateStats() {
+            document.getElementById('stat-total').textContent = items.length;
+        }
+
+        function renderCategoryChips() {
+            const container = document.getElementById('category-chips');
+            container.innerHTML = '';
+            
+            const allBtn = document.createElement('button');
+            allBtn.textContent = 'すべて';
+            allBtn.className = `px-4 py-1.5 text-xs rounded-full whitespace-nowrap border transition-all ${currentFilter.category === '' ? 'bg-cyan-400 text-black border-cyan-400' : 'bg-white/10 border-white/20 text-white/80 hover:bg-white/20'}`;
+            allBtn.onclick = () => { currentFilter.category = ''; renderAll(); };
+            container.appendChild(allBtn);
+
+            const cats = [...new Set(items.map(i => i.category))].sort();
+            cats.forEach(cat => {
+                const btn = document.createElement('button');
+                btn.textContent = cat;
+                btn.className = `px-4 py-1.5 text-xs rounded-full whitespace-nowrap border transition-all ${currentFilter.category === cat ? 'bg-cyan-400 text-black border-cyan-400' : 'bg-white/10 border-white/20 text-white/80 hover:bg-white/20'}`;
+                btn.onclick = () => { currentFilter.category = cat; renderAll(); };
+                container.appendChild(btn);
+            });
+        }
+
+        function renderItems() {
+            const grid = document.getElementById('items-grid');
+            const empty = document.getElementById('empty-state');
+            grid.innerHTML = '';
+
+            let filtered = items.filter(item => {
+                const matchSearch = !currentFilter.search || 
+                    item.name.toLowerCase().includes(currentFilter.search.toLowerCase()) ||
+                    (item.memo && item.memo.toLowerCase().includes(currentFilter.search.toLowerCase()));
+                const matchCat = !currentFilter.category || item.category === currentFilter.category;
+                return matchSearch && matchCat;
+            });
+
+            filtered.sort((a, b) => new Date(b.date) - new Date(a.date));
+
+            if (filtered.length === 0) {
+                empty.classList.remove('hidden');
+                return;
+            }
+            empty.classList.add('hidden');
+
+            filtered.forEach(item => {
+                const card = document.createElement('div');
+                card.className = `work-card rounded-3xl overflow-hidden`;
+                
+                const imgHTML = item.image ? 
+                    `<img src="${item.image}" class="w-full h-40 object-cover">` :
+                    `<div class="w-full h-40 bg-gradient-to-br from-violet-900/50 to-cyan-900/30 flex items-center justify-center"><i class="fa-solid fa-meteor text-5xl text-white/40"></i></div>`;
+
+                card.innerHTML = `
+                    ${imgHTML}
+                    <div class="p-4">
+                        <div class="font-semibold text-base mb-1 leading-tight">${item.name}</div>
+                        <div class="flex items-center gap-2 text-xs mb-2">
+                            <span class="px-2 py-0.5 bg-white/10 rounded-full text-cyan-300">${item.category}</span>
+                        </div>
+                        <div class="text-xs text-white/50 flex justify-between items-center">
+                            <span>${item.date}</span>
+                        </div>
+                        ${item.memo ? `<div class="text-xs text-white/60 mt-2 line-clamp-2">${item.memo}</div>` : ''}
+                        
+                        <div class="flex gap-2 mt-4">
+                            <button onclick="editItem(${item.id}); event.stopImmediatePropagation()" 
+                                    class="flex-1 text-xs py-2 bg-white/10 hover:bg-white/20 rounded-2xl">編集</button>
+                            <button onclick="deleteItem(${item.id}); event.stopImmediatePropagation()" 
+                                    class="flex-1 text-xs py-2 bg-white/10 hover:bg-red-500/30 text-red-300 rounded-2xl">削除</button>
+                        </div>
+                    </div>
+                `;
+                grid.appendChild(card);
+            });
+        }
+
+        function renderAll() {
+            renderItems();
+            updateStats();
+            renderCategoryChips();
+        }
+
+        function setupSearch() {
+            document.getElementById('search-input').addEventListener('input', e => {
+                currentFilter.search = e.target.value;
+                renderItems();
+            });
+        }
+
+        function openAddModal() {
+            editingId = null;
+            tempImage = null;
+            document.getElementById('modal-title').textContent = '新しい作品を追加';
+            document.getElementById('item-name').value = '';
+            document.getElementById('item-category').value = '';
+            document.getElementById('item-memo').value = '';
+            
+            const today = new Date().toISOString().split('T')[0];
+            document.getElementById('item-date').value = today;
+            
+            document.getElementById('image-preview-container').classList.add('hidden');
+            document.getElementById('item-image').value = '';
+            
+            document.getElementById('modal').classList.remove('hidden');
+            document.getElementById('modal').classList.add('flex');
+        }
+
+        function editItem(id) {
+            const item = items.find(i => i.id === id);
+            if (!item) return;
+
+            editingId = id;
+            tempImage = null;
+            document.getElementById('modal-title').textContent = '作品を編集';
+            
+            document.getElementById('item-name').value = item.name;
+            document.getElementById('item-date').value = item.date;
+            document.getElementById('item-category').value = item.category;
+            document.getElementById('item-memo').value = item.memo || '';
+
+            const previewContainer = document.getElementById('image-preview-container');
+            if (item.image) {
+                document.getElementById('image-preview').src = item.image;
+                previewContainer.classList.remove('hidden');
+            } else {
+                previewContainer.classList.add('hidden');
+            }
+
+            document.getElementById('modal').classList.remove('hidden');
+            document.getElementById('modal').classList.add('flex');
+        }
+
+        function previewImage(input) {
+            if (input.files && input.files[0]) {
+                const reader = new FileReader();
+                reader.onload = e => {
+                    tempImage = e.target.result;
+                    const container = document.getElementById('image-preview-container');
+                    document.getElementById('image-preview').src = tempImage;
+                    container.classList.remove('hidden');
+                };
+                reader.readAsDataURL(input.files[0]);
+            }
+        }
+
+        function clearImagePreview() {
+            document.getElementById('image-preview-container').classList.add('hidden');
+            tempImage = null;
+        }
+
+        function saveItem() {
+            const name = document.getElementById('item-name').value.trim();
+            if (!name) return alert('作品名を入力してね');
+
+            const date = document.getElementById('item-date').value;
+            if (!date) return alert('制作日を入力してね');
+
+            const category = document.getElementById('item-category').value.trim() || 'その他';
+            const memo = document.getElementById('item-memo').value.trim();
+
+            let image = null;
+            if (tempImage) {
+                image = tempImage;
+            } else if (editingId) {
+                const existing = items.find(i => i.id === editingId);
+                if (existing) image = existing.image;
+            }
+
+            if (editingId) {
+                const idx = items.findIndex(i => i.id === editingId);
+                items[idx] = { ...items[idx], name, category, memo, date, image };
+            } else {
+                items.push({ id: Date.now(), name, category, memo, date, image });
+            }
+
+            saveToStorage();
+            closeModal();
+            renderAll();
+        }
+
+        function closeModal() {
+            document.getElementById('modal').classList.add('hidden');
+            document.getElementById('modal').classList.remove('flex');
+        }
+
+        function deleteItem(id) {
+            if (confirm('この作品を削除しますか？')) {
+                items = items.filter(i => i.id !== id);
+                saveToStorage();
+                renderAll();
+            }
+        }
+
+        function clearAllData() {
+            if (confirm('すべての作品データを削除しますか？')) {
+                localStorage.removeItem('cosmicWorksCollection');
+                items = [];
+                renderAll();
+            }
+        }
+
+        function init() {
+            loadFromStorage();
+            setupSearch();
+            renderAll();
+            
+            // 初回に星を少し追加（装飾）
+            console.log('%c[宇宙作品コレクション] 宇宙モード起動完了！', 'color:#67e8f9');
+        }
+
+        window.onload = init;
+    </script>
+</body>
+</html>
