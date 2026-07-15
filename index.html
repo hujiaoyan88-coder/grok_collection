@@ -68,8 +68,8 @@
                 <div class="flex items-center gap-x-3">
                     <div class="w-12 h-12 rounded-2xl bg-gradient-to-br from-cyan-400 via-violet-500 to-fuchsia-500 flex items-center justify-center text-3xl shadow-lg">🌌</div>
                     <div>
-                        <h1 class="text-3xl font-bold tracking-[-1px]">宇宙作品</h1>
-                        <p class="text-xs text-cyan-300">My Cosmic Creations</p>
+                        <h1 class="text-3xl font-bold tracking-[-1px]">手芸作品</h1>
+                        <p class="text-xs text-cyan-300">My Creations</p>
                     </div>
                 </div>
                 <button onclick="clearAllData()" class="p-2 text-white/60 hover:text-red-400">
@@ -171,50 +171,7 @@
         let editingId = null;
         let tempImage = null;
 
-        function loadFromStorage() {
-            const saved = localStorage.getItem('cosmicWorksCollection');
-            if (saved) {
-                items = JSON.parse(saved);
-            } else {
-                // 宇宙作品サンプル
-                items = [
-                    {
-                        id: Date.now() - 120000,
-                        name: "銀河の夜明け",
-                        category: "デジタルイラスト",
-                        memo: "初めての宇宙テーマ作品。星の光をこだわって描いた",
-                        image: "https://picsum.photos/id/1015/400/300",
-                        date: "2025-06-15"
-                    },
-                    {
-                        id: Date.now() - 90000,
-                        name: "ネビュラ探検船",
-                        category: "3Dモデル",
-                        memo: "Blenderで作った宇宙船。エンジンの光が自慢",
-                        image: "https://picsum.photos/id/201/400/300",
-                        date: "2025-07-02"
-                    },
-                    {
-                        id: Date.now() - 60000,
-                        name: "ピクセル宇宙冒険",
-                        category: "ピクセルアート",
-                        memo: "レトロゲーム風の短編アニメーション用素材",
-                        image: "https://picsum.photos/id/1005/400/300",
-                        date: "2025-05-20"
-                    }
-                ];
-                saveToStorage();
-            }
-        }
-
-        function saveToStorage() {
-            localStorage.setItem('cosmicWorksCollection', JSON.stringify(items));
-        }
-
-        function updateStats() {
-            document.getElementById('stat-total').textContent = items.length;
-        }
-
+        
         function renderCategoryChips() {
             const container = document.getElementById('category-chips');
             container.innerHTML = '';
@@ -232,72 +189,6 @@
                 btn.className = `px-4 py-1.5 text-xs rounded-full whitespace-nowrap border transition-all ${currentFilter.category === cat ? 'bg-cyan-400 text-black border-cyan-400' : 'bg-white/10 border-white/20 text-white/80 hover:bg-white/20'}`;
                 btn.onclick = () => { currentFilter.category = cat; renderAll(); };
                 container.appendChild(btn);
-            });
-        }
-
-        function renderItems() {
-            const grid = document.getElementById('items-grid');
-            const empty = document.getElementById('empty-state');
-            grid.innerHTML = '';
-
-            let filtered = items.filter(item => {
-                const matchSearch = !currentFilter.search || 
-                    item.name.toLowerCase().includes(currentFilter.search.toLowerCase()) ||
-                    (item.memo && item.memo.toLowerCase().includes(currentFilter.search.toLowerCase()));
-                const matchCat = !currentFilter.category || item.category === currentFilter.category;
-                return matchSearch && matchCat;
-            });
-
-            filtered.sort((a, b) => new Date(b.date) - new Date(a.date));
-
-            if (filtered.length === 0) {
-                empty.classList.remove('hidden');
-                return;
-            }
-            empty.classList.add('hidden');
-
-            filtered.forEach(item => {
-                const card = document.createElement('div');
-                card.className = `work-card rounded-3xl overflow-hidden`;
-                
-                const imgHTML = item.image ? 
-                    `<img src="${item.image}" class="w-full h-40 object-cover">` :
-                    `<div class="w-full h-40 bg-gradient-to-br from-violet-900/50 to-cyan-900/30 flex items-center justify-center"><i class="fa-solid fa-meteor text-5xl text-white/40"></i></div>`;
-
-                card.innerHTML = `
-                    ${imgHTML}
-                    <div class="p-4">
-                        <div class="font-semibold text-base mb-1 leading-tight">${item.name}</div>
-                        <div class="flex items-center gap-2 text-xs mb-2">
-                            <span class="px-2 py-0.5 bg-white/10 rounded-full text-cyan-300">${item.category}</span>
-                        </div>
-                        <div class="text-xs text-white/50 flex justify-between items-center">
-                            <span>${item.date}</span>
-                        </div>
-                        ${item.memo ? `<div class="text-xs text-white/60 mt-2 line-clamp-2">${item.memo}</div>` : ''}
-                        
-                        <div class="flex gap-2 mt-4">
-                            <button onclick="editItem(${item.id}); event.stopImmediatePropagation()" 
-                                    class="flex-1 text-xs py-2 bg-white/10 hover:bg-white/20 rounded-2xl">編集</button>
-                            <button onclick="deleteItem(${item.id}); event.stopImmediatePropagation()" 
-                                    class="flex-1 text-xs py-2 bg-white/10 hover:bg-red-500/30 text-red-300 rounded-2xl">削除</button>
-                        </div>
-                    </div>
-                `;
-                grid.appendChild(card);
-            });
-        }
-
-        function renderAll() {
-            renderItems();
-            updateStats();
-            renderCategoryChips();
-        }
-
-        function setupSearch() {
-            document.getElementById('search-input').addEventListener('input', e => {
-                currentFilter.search = e.target.value;
-                renderItems();
             });
         }
 
@@ -413,22 +304,6 @@
             }
         }
 
-        function init() {
-            loadFromStorage();
-            setupSearch();
-            renderAll();
-            
-            // 初回に星を少し追加（装飾）
-            console.log('%c[宇宙作品コレクション] 宇宙モード起動完了！', 'color:#67e8f9');
-        }
-
-        window.onload = init;
-        
-        let items = [];
-        let currentFilter = { search: '', category: '' };
-        let editingId = null;
-        let tempImage = null;
-
         function loadFromStorage() {
             const saved = localStorage.getItem('cosmicWorksCollection');
             if (saved) items = JSON.parse(saved);
@@ -448,23 +323,6 @@
             document.getElementById('stat-total').textContent = items.length;
         }
 
-        function renderCategoryChips() { /* 前回と同じ（省略せず全部入れる） */
-            const container = document.getElementById('category-chips');
-            container.innerHTML = '';
-            const all = document.createElement('button');
-            all.textContent = 'すべて';
-            all.className = `px-5 py-2 text-sm rounded-full whitespace-nowrap ${currentFilter.category === '' ? 'bg-cyan-400 text-black' : 'bg-white/10 text-white/80'}`;
-            all.onclick = () => { currentFilter.category = ''; renderAll(); };
-            container.appendChild(all);
-
-            [...new Set(items.map(i=>i.category))].sort().forEach(cat => {
-                const btn = document.createElement('button');
-                btn.textContent = cat;
-                btn.className = `px-5 py-2 text-sm rounded-full whitespace-nowrap ${currentFilter.category === cat ? 'bg-cyan-400 text-black' : 'bg-white/10 text-white/80'}`;
-                btn.onclick = () => { currentFilter.category = cat; renderAll(); };
-                container.appendChild(btn);
-            });
-        }
 
         function renderItems() {
             const grid = document.getElementById('items-grid');
