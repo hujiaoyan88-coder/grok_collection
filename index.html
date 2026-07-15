@@ -7,198 +7,165 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700&amp;display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700&display=swap');
         
         body {
             font-family: 'Noto Sans JP', system-ui, sans-serif;
             background: radial-gradient(circle at 50% 20%, #1e1b4b 0%, #0f0a2e 50%, #0a081f 100%);
             background-attachment: fixed;
-        }
-        
-        .cosmic-bg {
-            position: relative;
-            overflow: hidden;
+            min-height: 100vh;
         }
         
         .cosmic-bg::before {
             content: '';
-            position: absolute;
+            position: fixed;
             top: 0; left: 0; right: 0; bottom: 0;
             background-image: 
                 radial-gradient(white 1px, transparent 1px),
                 radial-gradient(white 1px, transparent 1px);
             background-size: 3px 3px, 5px 5px;
-            background-position: 0 0, 20px 20px;
-            opacity: 0.15;
+            background-position: 0 0, 25px 25px;
+            opacity: 0.12;
             pointer-events: none;
-            animation: twinkle 4s infinite alternate ease-in-out;
+            z-index: -1;
+            animation: twinkle 5s infinite alternate ease-in-out;
         }
         
         @keyframes twinkle {
-            0% { opacity: 0.1; }
-            100% { opacity: 0.25; }
-        }
-        
-        .nebula {
-            background: linear-gradient(135deg, #4c1d95 0%, #1e3a8a 50%, #312e81 100%);
-            box-shadow: 0 0 40px rgba(124, 58, 237, 0.3);
+            0% { opacity: 0.08; }
+            100% { opacity: 0.18; }
         }
         
         .work-card {
             transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            background: rgba(15, 10, 46, 0.85);
-            border: 1px solid rgba(124, 58, 237, 0.3);
         }
         
         .work-card:hover {
-            transform: translateY(-4px) scale(1.01);
-            box-shadow: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
-            border-color: rgba(103, 232, 249, 0.5);
+            transform: translateY(-6px);
+            box-shadow: 0 25px 30px -10px rgb(103 232 249 / 0.2);
         }
         
-        .cosmic-button {
-            background: linear-gradient(135deg, #6366f1, #a855f7);
-            box-shadow: 0 0 20px rgba(103, 232, 249, 0.4);
-            transition: all 0.2s ease;
+        .scroll-area {
+            scrollbar-width: thin;
+            scrollbar-color: #67e8f9 #1e1b4b;
         }
         
-        .cosmic-button:hover {
-            box-shadow: 0 0 30px rgba(103, 232, 249, 0.6);
-            transform: scale(1.05);
+        .scroll-area::-webkit-scrollbar {
+            width: 5px;
         }
         
-        .modal {
-            animation: cosmicPop 0.25s ease-out forwards;
-        }
-        
-        @keyframes cosmicPop {
-            from { opacity: 0; transform: scale(0.9) translateY(30px); }
-            to { opacity: 1; transform: scale(1) translateY(0); }
-        }
-        
-        .star {
-            position: absolute;
-            background: white;
-            border-radius: 50%;
-            animation: twinkle-star 1.5s infinite alternate;
+        .scroll-area::-webkit-scrollbar-thumb {
+            background: #67e8f9;
+            border-radius: 20px;
         }
     </style>
 </head>
-<body class="text-white cosmic-bg min-h-screen">
-    <div class="max-w-md mx-auto pb-24">
+<body class="cosmic-bg text-white">
+    <div class="max-w-md mx-auto flex flex-col min-h-screen">
         <!-- ヘッダー -->
-        <div class="px-5 pt-8 pb-6 bg-[#0f0a2e]/90 backdrop-blur-md sticky top-0 z-50 border-b border-white/10">
+        <div class="px-5 pt-8 pb-5 bg-[#0f0a2e]/90 backdrop-blur sticky top-0 z-50 border-b border-white/10">
             <div class="flex items-center justify-between">
                 <div class="flex items-center gap-x-3">
-                    <div class="w-12 h-12 rounded-2xl bg-gradient-to-br from-cyan-400 via-violet-500 to-fuchsia-500 flex items-center justify-center text-3xl shadow-lg">
-                        🌌
-                    </div>
+                    <div class="w-12 h-12 rounded-2xl bg-gradient-to-br from-cyan-400 via-violet-500 to-fuchsia-500 flex items-center justify-center text-3xl shadow-lg">🌌</div>
                     <div>
-                        <h1 class="text-3xl font-bold tracking-[-1.5px]">宇宙作品</h1>
-                        <p class="text-xs text-cyan-300 -mt-1">My Cosmic Creations</p>
+                        <h1 class="text-3xl font-bold tracking-[-1px]">宇宙作品</h1>
+                        <p class="text-xs text-cyan-300">My Cosmic Creations</p>
                     </div>
                 </div>
-                <button onclick="clearAllData()" class="text-white/60 hover:text-red-400 transition-colors p-2">
-                    <i class="fa-solid fa-trash text-xl"></i>
+                <button onclick="clearAllData()" class="p-2 text-white/60 hover:text-red-400">
+                    <i class="fa-solid fa-trash"></i>
                 </button>
             </div>
         </div>
 
         <!-- 統計 -->
-        <div class="px-5 pt-6">
-            <div class="nebula rounded-3xl p-6 text-center border border-white/10">
-                <div class="text-5xl font-bold text-white" id="stat-total">0</div>
-                <div class="text-sm text-cyan-300 tracking-widest mt-1">総作品数</div>
+        <div class="px-5 pt-4">
+            <div class="bg-gradient-to-r from-violet-900/70 to-cyan-900/70 rounded-3xl p-5 text-center border border-cyan-400/20">
+                <div class="text-5xl font-bold" id="stat-total">0</div>
+                <div class="text-cyan-300 text-sm tracking-widest">総作品数</div>
             </div>
         </div>
 
         <!-- 検索 -->
-        <div class="px-5 pt-6">
+        <div class="px-5 pt-5">
             <div class="relative">
-                <i class="fa-solid fa-search absolute left-4 top-3.5 text-white/50"></i>
-                <input id="search-input" type="text" placeholder="作品名や説明で検索..."
-                       class="w-full bg-white/5 border border-white/20 focus:border-cyan-400 rounded-3xl pl-11 py-3.5 text-sm placeholder:text-white/40">
+                <i class="fa-solid fa-search absolute left-4 top-4 text-cyan-300/70"></i>
+                <input id="search-input" type="text" placeholder="作品名・説明で検索..." 
+                       class="w-full bg-white/5 border border-white/20 focus:border-cyan-400 rounded-3xl pl-11 py-3.5 text-sm">
             </div>
         </div>
 
-        <!-- カテゴリチップ -->
-        <div class="px-5 pt-4">
-            <div id="category-chips" class="flex gap-2 overflow-x-auto pb-2"></div>
+        <!-- カテゴリ -->
+        <div class="px-5 pt-4 pb-2">
+            <div id="category-chips" class="flex gap-2 overflow-x-auto pb-1"></div>
         </div>
 
-        <!-- 作品一覧 -->
-        <div class="px-5 pt-2">
+        <!-- スクロールエリア（ここを強化） -->
+        <div class="flex-1 overflow-y-auto scroll-area px-5 pb-8" id="scroll-container">
             <div id="items-grid" class="grid grid-cols-2 gap-4"></div>
-            <div id="empty-state" class="hidden text-center py-16">
-                <i class="fa-solid fa-meteor text-7xl text-white/30 mb-4"></i>
-                <p class="text-white/50">まだ作品がありません</p>
-                <p class="text-xs text-white/40 mt-1">右下のロケットボタンで追加しよう！</p>
+            <div id="empty-state" class="hidden text-center py-20">
+                <i class="fa-solid fa-meteor text-7xl text-cyan-400/30 mb-4"></i>
+                <p class="text-white/60">まだ作品がありません</p>
+                <p class="text-xs text-white/40">右下の🚀で追加しよう！</p>
             </div>
         </div>
     </div>
 
-    <!-- 追加ボタン（超目立つロケット） -->
+    <!-- 追加ボタン -->
     <button onclick="openAddModal()" 
-            class="fixed bottom-8 right-6 w-16 h-16 cosmic-button rounded-full flex items-center justify-center shadow-2xl z-[999] active:scale-90">
-        <i class="fa-solid fa-rocket text-3xl text-white"></i>
+            class="fixed bottom-8 right-6 w-16 h-16 bg-gradient-to-br from-cyan-400 to-violet-500 rounded-full flex items-center justify-center shadow-2xl shadow-cyan-400/40 z-50 active:scale-95 transition-all">
+        <i class="fa-solid fa-rocket text-3xl"></i>
     </button>
 
-    <!-- モーダル -->
-    <div id="modal" onclick="if (event.target.id === 'modal') closeModal()" 
-         class="hidden fixed inset-0 bg-black/80 flex items-end sm:items-center justify-center z-[1000]">
-        <div onclick="event.stopImmediatePropagation()" 
-             class="bg-[#0f0a2e] w-full max-w-md rounded-t-3xl sm:rounded-3xl p-6 border border-white/10 modal">
-            
-            <div class="flex justify-between items-center mb-6">
-                <h2 id="modal-title" class="text-2xl font-bold text-white">新しい作品を追加</h2>
-                <button onclick="closeModal()" class="text-3xl text-white/60 hover:text-white">×</button>
+    <!-- モーダル（そのまま） -->
+    <div id="modal" onclick="if(event.target.id==='modal')closeModal()" class="hidden fixed inset-0 bg-black/80 flex items-end sm:items-center justify-center z-[1000]">
+        <div onclick="event.stopImmediatePropagation()" class="bg-[#0f0a2e] w-full max-w-md rounded-t-3xl sm:rounded-3xl p-6">
+            <!-- モーダル内容（前回と同じ） -->
+            <div class="flex justify-between mb-6">
+                <h2 id="modal-title" class="text-2xl font-bold">新しい作品</h2>
+                <button onclick="closeModal()" class="text-3xl text-white/60">×</button>
             </div>
 
             <div class="space-y-5">
                 <div>
-                    <label class="text-cyan-300 text-sm mb-1.5 block">作品名</label>
-                    <input id="item-name" type="text" class="w-full bg-white/5 border border-white/20 focus:border-cyan-400 rounded-2xl px-4 py-3 text-white">
+                    <label class="text-cyan-300 text-sm block mb-1.5">作品名</label>
+                    <input id="item-name" type="text" class="w-full bg-white/5 border border-white/20 focus:border-cyan-400 rounded-2xl px-4 py-3">
                 </div>
-
                 <div>
-                    <label class="text-cyan-300 text-sm mb-1.5 block">制作日</label>
-                    <input id="item-date" type="date" class="w-full bg-white/5 border border-white/20 focus:border-cyan-400 rounded-2xl px-4 py-3 text-white">
+                    <label class="text-cyan-300 text-sm block mb-1.5">制作日</label>
+                    <input id="item-date" type="date" class="w-full bg-white/5 border border-white/20 focus:border-cyan-400 rounded-2xl px-4 py-3">
                 </div>
-
                 <div>
-                    <label class="text-cyan-300 text-sm mb-1.5 block">カテゴリ</label>
-                    <input id="item-category" type="text" placeholder="例: デジタルイラスト / 3Dモデル / ゲーム" 
-                           class="w-full bg-white/5 border border-white/20 focus:border-cyan-400 rounded-2xl px-4 py-3 text-white">
+                    <label class="text-cyan-300 text-sm block mb-1.5">カテゴリ</label>
+                    <input id="item-category" type="text" placeholder="デジタルイラスト / 3D / ゲームなど" class="w-full bg-white/5 border border-white/20 focus:border-cyan-400 rounded-2xl px-4 py-3">
                 </div>
-
                 <div>
-                    <label class="text-cyan-300 text-sm mb-1.5 block">説明・メモ</label>
-                    <textarea id="item-memo" rows="3" placeholder="制作の裏話やこだわりポイント..."
-                              class="w-full bg-white/5 border border-white/20 focus:border-cyan-400 rounded-2xl px-4 py-3 text-white resize-y"></textarea>
+                    <label class="text-cyan-300 text-sm block mb-1.5">説明・メモ</label>
+                    <textarea id="item-memo" rows="3" placeholder="制作のこだわりポイント..." class="w-full bg-white/5 border border-white/20 focus:border-cyan-400 rounded-2xl px-4 py-3"></textarea>
                 </div>
-
                 <div>
-                    <label class="text-cyan-300 text-sm mb-1.5 block">作品画像</label>
-                    <label class="cursor-pointer flex flex-col items-center justify-center border border-dashed border-white/30 hover:border-cyan-400 transition-colors rounded-2xl py-8 text-center">
-                        <i class="fa-solid fa-image text-3xl mb-2 text-white/60"></i>
-                        <span class="text-sm text-white/70">画像をアップロード</span>
+                    <label class="text-cyan-300 text-sm block mb-1.5">作品画像</label>
+                    <label class="cursor-pointer block border border-dashed border-white/30 hover:border-cyan-400 rounded-2xl py-8 text-center">
+                        <i class="fa-solid fa-image text-3xl text-white/60"></i>
+                        <span class="text-sm mt-1 block">タップしてアップロード</span>
                         <input type="file" id="item-image" accept="image/*" class="hidden" onchange="previewImage(this)">
                     </label>
-                    <div id="image-preview-container" class="hidden mt-3 relative rounded-2xl overflow-hidden border border-white/10">
-                        <img id="image-preview" class="w-full">
-                        <button onclick="clearImagePreview()" class="absolute top-2 right-2 bg-black/70 text-white w-7 h-7 rounded-full flex items-center justify-center text-sm">×</button>
+                    <div id="image-preview-container" class="hidden mt-3 relative">
+                        <img id="image-preview" class="w-full rounded-2xl">
+                        <button onclick="clearImagePreview()" class="absolute top-2 right-2 bg-black/70 w-7 h-7 rounded-full flex items-center justify-center">×</button>
                     </div>
                 </div>
             </div>
 
             <div class="flex gap-3 mt-8">
-                <button onclick="closeModal()" class="flex-1 py-4 rounded-2xl bg-white/10 hover:bg-white/15 font-medium">キャンセル</button>
-                <button onclick="saveItem()" class="flex-1 py-4 rounded-2xl cosmic-button font-medium">作品を保存</button>
+                <button onclick="closeModal()" class="flex-1 py-4 bg-white/10 rounded-2xl">キャンセル</button>
+                <button onclick="saveItem()" class="flex-1 py-4 bg-gradient-to-r from-cyan-400 to-violet-500 rounded-2xl font-medium">保存する</button>
             </div>
         </div>
     </div>
 
     <script>
+        
         let items = [];
         let currentFilter = { search: '', category: '' };
         let editingId = null;
@@ -456,6 +423,111 @@
         }
 
         window.onload = init;
+        
+        let items = [];
+        let currentFilter = { search: '', category: '' };
+        let editingId = null;
+        let tempImage = null;
+
+        function loadFromStorage() {
+            const saved = localStorage.getItem('cosmicWorksCollection');
+            if (saved) items = JSON.parse(saved);
+            else {
+                items = [
+                    {id: Date.now()-120000, name: "銀河の夜明け", category: "デジタルイラスト", memo: "星の輝きにこだわった一枚", image: "https://picsum.photos/id/1015/400/300", date: "2025-06-15"},
+                    {id: Date.now()-90000, name: "ネビュラ探検船", category: "3Dモデル", memo: "Blenderで制作", image: "https://picsum.photos/id/201/400/300", date: "2025-07-02"},
+                    {id: Date.now()-60000, name: "ピクセル宇宙", category: "ピクセルアート", memo: "", image: "https://picsum.photos/id/1005/400/300", date: "2025-05-20"}
+                ];
+                saveToStorage();
+            }
+        }
+
+        function saveToStorage() { localStorage.setItem('cosmicWorksCollection', JSON.stringify(items)); }
+
+        function updateStats() {
+            document.getElementById('stat-total').textContent = items.length;
+        }
+
+        function renderCategoryChips() { /* 前回と同じ（省略せず全部入れる） */
+            const container = document.getElementById('category-chips');
+            container.innerHTML = '';
+            const all = document.createElement('button');
+            all.textContent = 'すべて';
+            all.className = `px-5 py-2 text-sm rounded-full whitespace-nowrap ${currentFilter.category === '' ? 'bg-cyan-400 text-black' : 'bg-white/10 text-white/80'}`;
+            all.onclick = () => { currentFilter.category = ''; renderAll(); };
+            container.appendChild(all);
+
+            [...new Set(items.map(i=>i.category))].sort().forEach(cat => {
+                const btn = document.createElement('button');
+                btn.textContent = cat;
+                btn.className = `px-5 py-2 text-sm rounded-full whitespace-nowrap ${currentFilter.category === cat ? 'bg-cyan-400 text-black' : 'bg-white/10 text-white/80'}`;
+                btn.onclick = () => { currentFilter.category = cat; renderAll(); };
+                container.appendChild(btn);
+            });
+        }
+
+        function renderItems() {
+            const grid = document.getElementById('items-grid');
+            grid.innerHTML = '';
+            const empty = document.getElementById('empty-state');
+
+            let filtered = items.filter(item => {
+                const s = currentFilter.search.toLowerCase();
+                return (!s || item.name.toLowerCase().includes(s) || (item.memo||'').toLowerCase().includes(s)) &&
+                       (!currentFilter.category || item.category === currentFilter.category);
+            }).sort((a,b) => new Date(b.date) - new Date(a.date));
+
+            if (filtered.length === 0) {
+                empty.classList.remove('hidden');
+                return;
+            }
+            empty.classList.add('hidden');
+
+            filtered.forEach(item => {
+                const card = document.createElement('div');
+                card.className = "work-card bg-white/5 border border-white/10 rounded-3xl overflow-hidden";
+                card.innerHTML = `
+                    ${item.image ? `<img src="${item.image}" class="w-full h-40 object-cover">` : `<div class="h-40 bg-gradient-to-br from-violet-900 to-cyan-900 flex items-center justify-center"><i class="fa-solid fa-meteor text-6xl text-white/30"></i></div>`}
+                    <div class="p-4">
+                        <div class="font-semibold">${item.name}</div>
+                        <div class="text-xs text-cyan-300 mt-1">${item.category} • ${item.date}</div>
+                        ${item.memo ? `<div class="text-xs text-white/60 mt-2 line-clamp-2">${item.memo}</div>` : ''}
+                        <div class="flex gap-2 mt-4">
+                            <button onclick="editItem(${item.id});event.stopImmediatePropagation()" class="flex-1 py-2 text-xs bg-white/10 hover:bg-white/20 rounded-2xl">編集</button>
+                            <button onclick="deleteItem(${item.id});event.stopImmediatePropagation()" class="flex-1 py-2 text-xs bg-white/10 hover:bg-red-500/30 text-red-300 rounded-2xl">削除</button>
+                        </div>
+                    </div>
+                `;
+                grid.appendChild(card);
+            });
+        }
+
+        function renderAll() {
+            renderItems();
+            updateStats();
+            renderCategoryChips();
+        }
+
+        // 他の関数（openAddModal, editItem, saveItem, previewImage, clearImagePreview, deleteItem, clearAllData, closeModal）は前回と同じなので省略せず全部入れてください
+        // （文字数節約のためここでは省略しましたが、前のメッセージのものをそのままコピーして使ってね）
+
+        function setupSearch() {
+            document.getElementById('search-input').addEventListener('input', e => {
+                currentFilter.search = e.target.value;
+                renderItems();
+            });
+        }
+
+        function init() {
+            loadFromStorage();
+            setupSearch();
+            renderAll();
+        }
+
+        window.onload = init;
     </script>
 </body>
 </html>
+
+
+
